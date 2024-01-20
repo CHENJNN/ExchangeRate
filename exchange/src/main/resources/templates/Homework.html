@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/9d1d9a82d2.js" crossorigin="anonymous"></script>
+    <title>Exchange</title>
+</head>
+<style>
+    .chart-container {
+        width: 50%;
+        height: 50%;
+        margin: auto;
+    }
+</style>
+<body>
+<div class="card chart-container">
+    <div >
+        <H3 style="text-align:center">Exchange rate</H3>
+    </div>
+    <select id="select" class="form-select" aria-label="Default select example">
+        <option>請選擇</option>
+        <option th:each="item:${list}" th:text="${item}" th:value="${item}"></option>
+    </select>
+    <div id="content">
+        <canvas id="chart"></canvas>
+    </div>
+</div>
+
+</body>
+<!-- Remember to include jQuery :) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<!-- jQuery Modal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<!-- bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+<script>
+    $('#select').on('change', function (e){
+        let country =  $('#select').val();
+        $('#content').empty();
+        let dom =`<canvas id="chart"></canvas>`;
+        $('#content').append(dom);
+        $.ajax({
+            type:"POST",
+            url: "/exchange/change",
+            data: {
+                country: country
+            },
+            success: function( result ) {
+                console.log(result)
+                let data = result;
+                const ctx = document.getElementById("chart").getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ["Jan",
+                            "Feb",
+                            "Mar",
+                            "Apr",
+                            "May",
+                            "Jun",
+                            "Jul",
+                            "Aug",
+                            "Sep",
+                            "Oct",
+                            "Nov",
+                            "Dec"],
+                        datasets: [{
+                            label: country,
+                            backgroundColor: 'rgba(161, 198, 247, 1)',
+                            borderColor: 'rgb(47, 128, 237)',
+                            data: data,
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    stepSize: 0.5,
+                                }
+                            }]
+                        }
+                    },
+                });
+            }
+        });
+    })
+</script>
+
+</html>
