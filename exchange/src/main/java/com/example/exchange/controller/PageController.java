@@ -1,6 +1,7 @@
 package com.example.exchange.controller;
 
 import com.example.exchange.service.ExchangeRateService;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
+@Log4j2
 public class PageController {
 
     @Autowired
